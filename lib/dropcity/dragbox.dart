@@ -1,6 +1,6 @@
-import 'package:dropcity/country.dart';
-import 'package:dropcity/draggable_text.dart';
-import 'package:dropcity/drop_target.dart';
+import 'package:dropcity/dropcity/country.dart';
+import 'package:dropcity/dropcity/draggable_text.dart';
+import 'package:dropcity/dropcity/drop_target.dart';
 import 'package:flutter/material.dart';
 
 class DragBox extends StatefulWidget {

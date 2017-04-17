@@ -1,5 +1,5 @@
-import 'package:dropcity/country.dart';
-import 'package:dropcity/dragbox.dart';
+import 'package:dropcity/dropcity/country.dart';
+import 'package:dropcity/dropcity/dragbox.dart';
 import 'package:flutter/material.dart';
 
 final countries = [

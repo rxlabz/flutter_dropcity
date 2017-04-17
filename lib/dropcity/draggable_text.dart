@@ -1,5 +1,5 @@
-import 'package:dropcity/country.dart';
-import 'package:dropcity/draggable_view.dart';
+import 'package:dropcity/dropcity/country.dart';
+import 'package:dropcity/dropcity/draggable_view.dart';
 import 'package:flutter/material.dart';
 
 class DraggableCity extends StatefulWidget {
