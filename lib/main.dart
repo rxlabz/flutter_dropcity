@@ -19,6 +19,11 @@ class DropCityApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(home: new Scaffold(body: new DragBox(items)));
+    return new MaterialApp(
+        theme: getTheme(context), home: new Scaffold(body: new DragBox(items)));
   }
+
+  getTheme(BuildContext context) => Theme.of(context).copyWith(
+      textTheme: new TextTheme(
+          body1: new TextStyle(fontSize: 20.0, color: Colors.grey.shade700)));
 }

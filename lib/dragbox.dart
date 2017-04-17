@@ -19,12 +19,12 @@ class _DragBoxState extends State<DragBox> {
 
   int score = 0;
 
-  Widget getButton(String label, VoidCallback onPress) => new Padding(
+  Widget getButton(IconData icon, VoidCallback onPress) => new Padding(
       padding: new EdgeInsets.all(10.0),
-      child: new SizedBox(
-          width: 120.0,
-          height: 42.0,
-          child: new RaisedButton(child: new Text(label), onPressed: onPress)));
+      child: new FloatingActionButton(
+          backgroundColor: Colors.green,
+          child: new Icon(icon),
+          onPressed: onPress));
 
   @override
   Widget build(BuildContext context) {
@@ -34,14 +34,15 @@ class _DragBoxState extends State<DragBox> {
         height: size.height,
         child: new Stack(children: [
           new Positioned(
-              right: 20.0,
-              top: 40.0,
-              child: new Row(mainAxisSize: MainAxisSize.min, children: [
-                validated
-                    ? new Text('Score : $score / ${widget.items.length}')
-                    : getButton('Validate', onValidate),
-                getButton('Clear', onClear),
-              ])),
+            right: 20.0,
+            top: 40.0,
+            child: validated
+                ? new Row(children: [
+                    new Text('Score : $score / ${widget.items.length}'),
+                    getButton(Icons.refresh, onClear)
+                  ])
+                : getButton(Icons.check, onValidate),
+          ),
           new Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -80,8 +81,7 @@ class _DragBoxState extends State<DragBox> {
 
         // if country was associated with other dropTarget
         if (pairs.containsValue(notif.item))
-          pairs.remove(pairs.keys.firstWhere(
-              (k) => pairs[k] == notif.item) );
+          pairs.remove(pairs.keys.firstWhere((k) => pairs[k] == notif.item));
         onItemSelection(notif.item, notif.dropIndex);
       }
     });
