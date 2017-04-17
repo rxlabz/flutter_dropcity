@@ -6,7 +6,15 @@ class Country {
   final int id;
   final String city;
   final String country;
-  bool selected = false;
+  bool _selected = false;
+
+  bool get selected => _selected;
+
+  void set selected(bool value) {
+    _selected = value;
+    if( _selected == false )
+      status = Status.none;
+  }
   Status status;
 
   Country(this.id, this.city, this.country, {this.status: Status.none});

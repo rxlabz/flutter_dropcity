@@ -54,32 +54,48 @@ class _DragBoxState extends State<DragBox> {
                             .where((item) => !item.selected)
                             .map((item) => new DraggableCity(item))
                             .toList())),
-                new Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    mainAxisSize: MainAxisSize.max,
-                    children: widget.items
-                        .map((item) => new DropTarget(item, onItemSelection,
-                            selectedItem: pairs[item.id],
-                            onCancelSelection: onCancelSelection))
-                        .toList()),
+                new NotificationListener<SelectionNotification>(
+                    onNotification: onSelection,
+                    child: new Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisSize: MainAxisSize.max,
+                        children: widget.items
+                            .map((item) => new DropTarget(item,
+                                selectedItem: pairs[item.id]))
+                            .toList())),
               ])
         ]));
   }
 
-  void onItemSelection(Country selectedItem, DropTarget target) {
-    final toRemove = <int>[];
-    pairs.forEach((index, item) {
-      if (item.id == selectedItem.id) toRemove.add(index);
+  bool onSelection(SelectionNotification notif) {
+    setState(() {
+      // on de-selection
+      if (notif.cancel) {
+        if (notif.item != null) notif.item.selected = false;
+        pairs.remove(notif.dropIndex);
+      } else {
+        // if target was associated with other country
+        if (pairs[notif.dropIndex] != null)
+          pairs[notif.dropIndex].selected = false;
+
+        // if country was associated with other dropTarget
+        if (pairs.containsValue(notif.item))
+          pairs.remove(pairs.keys.firstWhere(
+              (k) => pairs[k] == notif.item) );
+        onItemSelection(notif.item, notif.dropIndex);
+      }
     });
+    return false;
+  }
+
+  void onItemSelection(Country selectedItem, int targetId) {
     setState(() {
       if (selectedItem != null) {
         selectedItem.selected = true;
         selectedItem.status = Status.none;
       }
 
-      toRemove.forEach((itemIndex) => pairs.remove(itemIndex));
-
-      pairs[target.id] = selectedItem;
+      pairs[targetId] = selectedItem;
     });
   }
 
@@ -105,13 +121,6 @@ class _DragBoxState extends State<DragBox> {
       });
       pairs.clear();
       validated = false;
-    });
-  }
-
-  void onCancelSelection(Country item, DropTarget target) {
-    setState(() {
-      if (item != null) item.selected = false;
-      pairs.remove(target.id);
     });
   }
 }
