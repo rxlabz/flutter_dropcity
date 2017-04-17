@@ -1,8 +1,7 @@
 # dropcity
 
-A new flutter project.
+A [flutter](http://flutter.io/) drag'n'drop example.
 
-## Getting Started
+[An introduction to Drag'n'drop in Flutter](https://rxlabz.github.io/dart,/flutter/2017/04/15/flutter-dragdrop-p1.html) (:fr: in french).
 
-For help getting started with Flutter, view our online
-[documentation](http://flutter.io/).
+![screenshot](https://github.com/rxlabz/flutter_dropcity/blob/master/img/dropcity1.png)
