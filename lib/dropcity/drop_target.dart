@@ -47,7 +47,7 @@ class _DropTargetState extends State<DropTarget> {
             widget.selection != null ? addDraggable(getTarget()) : getTarget());
   }
 
-  Widget addDraggable(DragTarget target) => new Draggable(
+  Widget addDraggable(DragTarget target) => new Draggable<Country>(
       data: widget.selection,
       dragAnchor: DragAnchor.pointer,
       onDraggableCanceled: onDragCancelled,
