@@ -3,23 +3,40 @@ import 'package:dropcity/dropcity/draggable_text.dart';
 import 'package:dropcity/dropcity/drop_target.dart';
 import 'package:flutter/material.dart';
 
-class DragBox extends StatefulWidget {
+class GameView extends StatefulWidget {
   List<Country> items;
 
-  DragBox(this.items);
+  GameView(this.items);
 
   @override
-  _DragBoxState createState() => new _DragBoxState();
+  _GameViewState createState() => new _GameViewState();
 }
 
-class _DragBoxState extends State<DragBox> {
+class _GameViewState extends State<GameView> {
+  final _gap = 8.0;
+  final _margin = 10.0;
+
   Map<int, Country> pairs = {};
 
   bool validated = false;
 
   int score = 0;
 
-  Widget getButton(IconData icon, VoidCallback onPress) => new Padding(
+  Size getDragableSize({Size areaSize, int numItems}) {
+    final landScape = areaSize.width > areaSize.height;
+    final targetWidth =
+        (areaSize.width - (2 * _margin) - (_gap * (numItems - 1))) / numItems;
+    return new Size(targetWidth, areaSize.height*(landScape ? 0.3 : 0.2));
+  }
+
+  Size getTargetSize({Size areaSize, int numItems}) {
+    final landScape = areaSize.width > areaSize.height;
+    final targetWidth =
+        (areaSize.width - (2 * _margin) - (_gap * (numItems - 1))) / numItems;
+    return new Size(targetWidth, areaSize.height*( landScape ? 0.45 : 0.3));
+  }
+
+  Widget _buildButton(IconData icon, VoidCallback onPress) => new Padding(
       padding: new EdgeInsets.all(10.0),
       child: new FloatingActionButton(
           backgroundColor: Colors.green,
@@ -29,6 +46,9 @@ class _DragBoxState extends State<DragBox> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final numItems = widget.items.length;
+    final draggableSize = getDragableSize(areaSize: size, numItems: numItems);
+    final targetSize = getTargetSize(areaSize: size, numItems: numItems);
     return new SizedBox(
         width: size.width,
         height: size.height,
@@ -39,36 +59,42 @@ class _DragBoxState extends State<DragBox> {
             child: validated
                 ? new Row(children: [
                     new Text('Score : $score / ${widget.items.length}'),
-                    getButton(Icons.refresh, onClear)
+                    _buildButton(Icons.refresh, _onClear)
                   ])
-                : getButton(Icons.check, onValidate),
+                : _buildButton(Icons.check, _onValidate),
           ),
           new Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                new ConstrainedBox(
-                    constraints: new BoxConstraints(minHeight: 100.0),
-                    child: new Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        mainAxisSize: MainAxisSize.max,
-                        children: widget.items
-                            .where((item) => !item.selected)
-                            .map((item) => new DraggableCity(item))
-                            .toList())),
-                new NotificationListener<SelectionNotification>(
-                    onNotification: onSelection,
-                    child: new Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        mainAxisSize: MainAxisSize.max,
-                        children: widget.items
-                            .map((item) => new DropTarget(item,
-                                selectedItem: pairs[item.id]))
-                            .toList())),
+                _buildDragableList(draggableSize),
+                _buildTargetRow(targetSize, draggableSize),
               ])
         ]));
   }
 
-  bool onSelection(SelectionNotification notif) {
+  Widget _buildDragableList(Size itemSize) =>
+      new Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisSize: MainAxisSize.max,
+          children: widget.items
+              .where((item) => !item.selected)
+              .map((item) => new DraggableCity(item, size: itemSize))
+              .toList()) ;
+
+  Widget _buildTargetRow(Size targetSize, Size itemSize) =>
+      new NotificationListener<SelectionNotification>(
+          onNotification: _onSelection,
+          child: new Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisSize: MainAxisSize.max,
+              children: widget.items
+                  .map((item) => new DropTarget(item,
+                      selectedItem: pairs[item.id],
+                      size: targetSize,
+                      itemSize: itemSize))
+                  .toList()));
+
+  bool _onSelection(SelectionNotification notif) {
     setState(() {
       // on de-selection
       if (notif.cancel) {
@@ -82,13 +108,13 @@ class _DragBoxState extends State<DragBox> {
         // if country was associated with other dropTarget
         if (pairs.containsValue(notif.item))
           pairs.remove(pairs.keys.firstWhere((k) => pairs[k] == notif.item));
-        onItemSelection(notif.item, notif.dropIndex);
+        _onItemSelection(notif.item, notif.dropIndex);
       }
     });
     return false;
   }
 
-  void onItemSelection(Country selectedItem, int targetId) {
+  void _onItemSelection(Country selectedItem, int targetId) {
     setState(() {
       if (selectedItem != null) {
         selectedItem.selected = true;
@@ -99,7 +125,7 @@ class _DragBoxState extends State<DragBox> {
     });
   }
 
-  void onValidate() {
+  void _onValidate() {
     setState(() {
       score = 0;
       pairs.forEach((index, item) {
@@ -113,7 +139,7 @@ class _DragBoxState extends State<DragBox> {
     });
   }
 
-  void onClear() {
+  void _onClear() {
     setState(() {
       pairs.forEach((index, item) {
         item.status = Status.none;

@@ -14,6 +14,10 @@ class SelectionNotification extends Notification {
 
 class DropTarget extends StatefulWidget {
   final Country item;
+
+  final Size size;
+  final Size itemSize;
+
   Country _selection;
 
   Country get selection => _selection;
@@ -25,7 +29,7 @@ class DropTarget extends StatefulWidget {
     _selection = value;
   }
 
-  DropTarget(this.item, {Country selectedItem}) {
+  DropTarget(this.item, {this.size, Country selectedItem, this.itemSize}) {
     _selection = selectedItem;
   }
   @override
@@ -42,7 +46,7 @@ class _DropTargetState extends State<DropTarget> {
   @override
   Widget build(BuildContext context) {
     return new Padding(
-        padding: new EdgeInsets.all(10.0),
+        padding: new EdgeInsets.all(4.0),
         child:
             widget.selection != null ? addDraggable(getTarget()) : getTarget());
   }
@@ -63,8 +67,8 @@ class _DropTargetState extends State<DropTarget> {
           List<dynamic> rejected) {
         return new SizedBox(
             child: new Container(
-                width: 200.0,
-                height: 200.0,
+                width: widget.size.width,
+                height: widget.size.height,
                 decoration: new BoxDecoration(
                     color: accepted.isEmpty
                         ? (widget.selection != null
@@ -82,8 +86,8 @@ class _DropTargetState extends State<DropTarget> {
                             child: new Text(widget.item.country)),
                         new Center(
                             child: new SizedBox(
-                                width: 100.0,
-                                height: 100.0,
+                                width: widget.itemSize.width,
+                                height: widget.itemSize.height,
                                 child: new Material(
                                     elevation: 1.0,
                                     child: new Center(
@@ -112,6 +116,7 @@ class _DropTargetState extends State<DropTarget> {
                 fontSize: 16.0,
                 color: Colors.white,
                 decoration: TextDecoration.none)),
+        size: widget.itemSize,
         color: Colors.cyan,
       ));
 }
