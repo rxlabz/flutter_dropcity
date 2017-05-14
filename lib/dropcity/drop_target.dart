@@ -66,7 +66,7 @@ class _DropTargetState extends State<DropTarget> {
                 width: 200.0,
                 height: 200.0,
                 decoration: new BoxDecoration(
-                    backgroundColor: accepted.isEmpty
+                    color: accepted.isEmpty
                         ? (widget.selection != null
                             ? getDropBorderColor(widget.selection.status)
                             : Colors.grey[300])
@@ -85,7 +85,7 @@ class _DropTargetState extends State<DropTarget> {
                                 width: 100.0,
                                 height: 100.0,
                                 child: new Material(
-                                    elevation: 1,
+                                    elevation: 1.0,
                                     child: new Center(
                                       child: new Text(
                                         widget.selection.city,

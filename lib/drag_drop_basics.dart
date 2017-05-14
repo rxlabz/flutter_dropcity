@@ -32,7 +32,7 @@ class _DragBoxState extends State<DragBox> {
           width: 200.0,
           height: 200.0,
           decoration: new BoxDecoration(
-            backgroundColor:
+            color:
             hovered ? Colors.cyan.shade100 : Colors.grey.shade200,
             border: new Border.all(
               width: 2.0,
