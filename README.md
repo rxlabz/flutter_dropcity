@@ -16,5 +16,6 @@ flutter run drag_drop_basics.dart
 flutter run  
 ```
 
+![mobile_screenshot](https://github.com/rxlabz/flutter_dropcity/blob/master/img/dropcity_mobile.png)
 
 ![screenshot](https://github.com/rxlabz/flutter_dropcity/blob/master/img/dropcity1.png)

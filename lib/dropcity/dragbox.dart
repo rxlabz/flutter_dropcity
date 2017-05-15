@@ -26,14 +26,14 @@ class _GameViewState extends State<GameView> {
     final landScape = areaSize.width > areaSize.height;
     final targetWidth =
         (areaSize.width - (2 * _margin) - (_gap * (numItems - 1))) / numItems;
-    return new Size(targetWidth, areaSize.height*(landScape ? 0.3 : 0.2));
+    return new Size(targetWidth, areaSize.height * (landScape ? 0.25 : 0.2));
   }
 
   Size getTargetSize({Size areaSize, int numItems}) {
     final landScape = areaSize.width > areaSize.height;
     final targetWidth =
         (areaSize.width - (2 * _margin) - (_gap * (numItems - 1))) / numItems;
-    return new Size(targetWidth, areaSize.height*( landScape ? 0.45 : 0.3));
+    return new Size(targetWidth, areaSize.height * (landScape ? 0.45 : 0.3));
   }
 
   Widget _buildButton(IconData icon, VoidCallback onPress) => new Padding(
@@ -45,41 +45,39 @@ class _GameViewState extends State<GameView> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    final mq = MediaQuery.of(context);
+
+    final size = mq.size;
     final numItems = widget.items.length;
     final draggableSize = getDragableSize(areaSize: size, numItems: numItems);
     final targetSize = getTargetSize(areaSize: size, numItems: numItems);
-    return new SizedBox(
-        width: size.width,
-        height: size.height,
-        child: new Stack(children: [
-          new Positioned(
-            right: 20.0,
-            top: 40.0,
-            child: validated
-                ? new Row(children: [
-                    new Text('Score : $score / ${widget.items.length}'),
-                    _buildButton(Icons.refresh, _onClear)
-                  ])
-                : _buildButton(Icons.check, _onValidate),
-          ),
-          new Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildDragableList(draggableSize),
-                _buildTargetRow(targetSize, draggableSize),
-              ])
-        ]));
+    return new Column(
+        mainAxisAlignment: mq.orientation == Orientation.landscape
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildValidateButton(),
+          new Expanded(child: _buildDragableList(draggableSize)),
+          _buildTargetRow(targetSize, draggableSize),
+        ]);
   }
 
-  Widget _buildDragableList(Size itemSize) =>
-      new Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  Widget _buildValidateButton() => new Row(
+          mainAxisAlignment: MainAxisAlignment.end,
           mainAxisSize: MainAxisSize.max,
-          children: widget.items
-              .where((item) => !item.selected)
-              .map((item) => new DraggableCity(item, size: itemSize))
-              .toList()) ;
+          children: [
+            new Text('Score : $score / ${widget.items.length}'),
+            _buildButton(validated ? Icons.refresh : Icons.check,
+                validated ? _onClear : _onValidate)
+          ]);
+
+  Widget _buildDragableList(Size itemSize) => new Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisSize: MainAxisSize.max,
+      children: widget.items
+          .where((item) => !item.selected)
+          .map((item) => new DraggableCity(item, size: itemSize))
+          .toList());
 
   Widget _buildTargetRow(Size targetSize, Size itemSize) =>
       new NotificationListener<SelectionNotification>(

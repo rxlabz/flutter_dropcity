@@ -21,7 +21,10 @@ class DropCityApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-        theme: _getTheme(context), home: new Scaffold(body: new GameView(items)));
+        theme: _getTheme(context),
+        home: new Scaffold(
+          body: new GameView(items),
+        ));
   }
 
   ThemeData _getTheme(BuildContext context) => Theme.of(context).copyWith(
